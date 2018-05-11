@@ -1,5 +1,18 @@
 from math import log
+import opereator
 
+# Create a simple data set of water animals for the tests
+def createDataSet():
+    dataSet = [[1, 1, 'yes'],
+               [1, 1, 'yes'],
+               [1, 0, 'no'],
+               [0, 1, 'no'],
+               [0, 1, 'no']]
+    labels = ['no surfacing','flippers']
+    #change to discrete values
+    return dataSet, labels
+
+# Calculate Shannon entropy of the data set
 def calcShannonEnt(dataSet):
     numEntries = len(dataSet)
     labelCounts = {}
