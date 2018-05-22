@@ -72,9 +72,13 @@ def majorityCnt(classList):
 
 def createTree(dataSet,labels):
     classList = [example[-1] for example in dataSet]
+    # classList.count(classList[0])就是数据划分列表classList下第一个类别的元素的数量。
+    # 如果第一个类别的元素的数量等于整个划分列表classList的大小，说明所有元素都只属于第一类
+    # 说明该划分下的样本类别已经完全相同。
     if classList.count(classList[0]) == len(classList):
         return classList[0]#stop splitting when all of the classes are equal
     if len(dataSet[0]) == 1: #stop splitting when there are no more features in dataSet
+    # len(dataSet[0]) == 1，说明只剩下一个特征了，不能再根据特征进一步划分了（前面每进行一次划分，都会删去那次划分所依据的特征）。但是现在这个划分下面仍然有一个以上类别的样本。因此根据前述的“多数表决”原则，由数量最多的样本确定这个叶子结点的类别。
         return majorityCnt(classList)
     bestFeat = chooseBestFeatureToSplit(dataSet)
     bestFeatLabel = labels[bestFeat]
