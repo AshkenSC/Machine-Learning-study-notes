@@ -59,8 +59,14 @@ def chooseBestFeatureToSplit(dataSet):
 def majorityCnt(classList):
     classCount={}
     for vote in classList:
+        # keys()返回字典里所有键。本if句功能：如果字典classList中没有vote这个键
+        # 就新建一个键vote，并赋初值0
         if vote not in classCount.keys(): classCount[vote] = 0
         classCount[vote] += 1
+    # sorted()返回一个新的排序好的列表。第一个参数表示根据字典classCount产生的迭代器，以遍历classCount
+    # 第二个参数operator.itemgetter(1)表示根据classCount每个成员的第二个元素进行排序。注意classCount
+    # 是一个字典，因此每个成员的第一个元素是键，第二个元素是值
+    # 第三个参数，reverse=True表示结果降序排列。如果为False则表示结果升序排列
     sortedClassCount = sorted(classCount.iteritems(), key=operator.itemgetter(1), reverse=True)
     return sortedClassCount[0][0]
 
