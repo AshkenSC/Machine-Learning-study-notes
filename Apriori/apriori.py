@@ -22,10 +22,16 @@ def createC1(dataSet):
     # 对C1中的每一项构建一个不变集合。frozenset是指被“冰冻”的集合，即用户不可改变的
     return map(frozenset, C1)
 
+# 从C1生成L1。在扫描集合C1后，判断C1中的单元素项集是否满足最小支持度要求。
+# 满足的项集构成集合L1，L1中元素相互组合构成C2，C2再进一步过滤变为L2
+# 三个参数：数据集、候选项集列表、感兴趣项集的最小支持度
 def scanD(D, Ck, minSupport):
+    # 创建一个空字典
     ssCnt = {}
+    # 遍历数据集中的所有交易记录以及C1中的所有候选集
     for tid in D:
         for can in Ck:
+            # 如果C1中的集合是记录的一部分，则增加字典中对应的计数值（此处字典的键就是集合）。
             if can.issubset(tid):
                 if not ssCnt.has_key(can): ssCnt[can]=1
                 else: ssCnt[can] += 1
@@ -33,8 +39,10 @@ def scanD(D, Ck, minSupport):
     retList = []
     supportData = {}
     for key in ssCnt:
+        # 计算所有项集的支持度
         support = ssCnt[key]/numItems
         if support >= minSupport:
             retList.insert(0,key)
         supportData[key] = support
+    # 返回一个包含支持度值的字典以备用
     return retList, supportData
