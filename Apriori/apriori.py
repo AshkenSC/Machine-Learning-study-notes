@@ -46,3 +46,15 @@ def scanD(D, Ck, minSupport):
         supportData[key] = support
     # 返回一个包含支持度值的字典以备用
     return retList, supportData
+
+def aprioriGen(Lk, k): #creates Ck
+    retList = []
+    lenLk = len(Lk)
+    for i in range(lenLk):
+        for j in range(i+1, lenLk):
+            L1 = list(Lk[i])[:k-2]; L2 = list(Lk[j])[:k-2]
+            L1.sort(); L2.sort()
+            # 如果前k-2个项相同时，将两个集合合并
+            if L1==L2:
+                retList.append(Lk[i] | Lk[j]) # 合并集合
+    return retList
