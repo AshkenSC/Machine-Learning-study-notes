@@ -47,7 +47,8 @@ def scanD(D, Ck, minSupport):
     # 返回一个包含支持度值的字典以备用
     return retList, supportData
 
-def aprioriGen(Lk, k): #creates Ck
+# 创建Ck
+def aprioriGen(Lk, k):
     retList = []
     lenLk = len(Lk)
     for i in range(lenLk):
@@ -58,3 +59,18 @@ def aprioriGen(Lk, k): #creates Ck
             if L1==L2:
                 retList.append(Lk[i] | Lk[j]) # 合并集合
     return retList
+
+
+def apriori(dataSet, minSupport = 0.5):
+    C1 = createC1(dataSet)
+    D = map(set, dataSet)
+    L1, supportData = scanD(D, C1, minSupport)
+    L = [L1]
+    k = 2
+    while (len(L[k-2]) > 0):
+        Ck = aprioriGen(L[k-2], k)
+        Lk, supK = scanD(D, Ck, minSupport)#scan DB to get Lk
+        supportData.update(supK)
+        L.append(Lk)
+        k += 1
+    return L, supportData
