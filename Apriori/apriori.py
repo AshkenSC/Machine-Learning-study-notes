@@ -4,6 +4,7 @@ from numpy import *
 def loadDataSet():
     return [[1, 3, 4], [2, 3, 5], [1, 2, 3, 5], [2, 5]]
 
+
 # 构建集合C1。C1是大小为1的所有候选项的集合
 def createC1(dataSet):
     # 创建一个空列表C1，用来储存所有不重复的项值
@@ -28,8 +29,9 @@ def createC1(dataSet):
 def scanD(D, Ck, minSupport):
     # 创建一个空字典
     ssCnt = {}
-    # 遍历数据集中的所有交易记录以及C1中的所有候选集
+    # 遍历数据集中的所有交易记录
     for tid in D:
+        # 遍历C1中的所有候选集
         for can in Ck:
             # 如果当前遍历到的C1中的某条集合是当前遍历到的某条交易记录的一部分，则增加字典中对应的计数值（此处字典的键就是集合）。
             if can.issubset(tid):
