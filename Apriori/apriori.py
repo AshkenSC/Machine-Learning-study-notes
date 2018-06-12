@@ -31,15 +31,15 @@ def scanD(D, Ck, minSupport):
     # 遍历数据集中的所有交易记录以及C1中的所有候选集
     for tid in D:
         for can in Ck:
-            # 如果C1中的集合是记录的一部分，则增加字典中对应的计数值（此处字典的键就是集合）。
+            # 如果当前遍历到的C1中的某条集合是当前遍历到的某条交易记录的一部分，则增加字典中对应的计数值（此处字典的键就是集合）。
             if can.issubset(tid):
                 if not ssCnt.has_key(can): ssCnt[can]=1
                 else: ssCnt[can] += 1
     numItems = float(len(D))
-    retList = []
-    supportData = {}
+    retList = [] # 空列表，存储满足最小支持度要求的集合
+    supportData = {} # 空字典，存储最频繁项集以及它们对应的支持度
+    # 遍历字典SScnt，计算所有项集的支持度。如果支持度满足最小支持度要求，就将项集添加到retList中
     for key in ssCnt:
-        # 计算所有项集的支持度
         support = ssCnt[key]/numItems
         if support >= minSupport:
             retList.insert(0,key)
