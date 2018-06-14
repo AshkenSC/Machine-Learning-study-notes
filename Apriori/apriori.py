@@ -23,30 +23,40 @@ def createC1(dataSet):
     # 对C1中的每一项构建一个不变集合。frozenset是指被“冰冻”的集合，即用户不可改变的
     return map(frozenset, C1)
 
-# 从C1生成L1。在扫描集合C1后，判断C1中的单元素项集是否满足最小支持度要求。
-# 满足的项集构成集合L1，L1中元素相互组合构成C2，C2再进一步过滤变为L2
+# 从C1生成L1。L1为从C1过滤出的所有满足最小支持度的单元素项集
+# L1中元素相互组合构成待过滤的所有二元素项集C2。C2经过滤后，保留满足最小支持度的二元素项集，构成L2
 # 三个参数：数据集、候选项集列表、感兴趣项集的最小支持度
 def scanD(D, Ck, minSupport):
     # 创建一个空字典
     ssCnt = {}
     # 遍历数据集中的所有交易记录
     for tid in D:
-        # 遍历C1中的所有候选集
+        # 遍历C1中的所有候选集
         for can in Ck:
             # 如果当前遍历到的C1中的某条集合是当前遍历到的某条交易记录的一部分，则增加字典中对应的计数值（此处字典的键就是集合）。
+            # issubset(tid):顾名思义，用于判断当前项集can是否是tid的子集
             if can.issubset(tid):
+                # ssCnt.has_key(can)表示检查字典ssCnt里是否有键can。
+                # 这个if语句表示，如果字典里没有当前候选项集can，则新增一个键，并赋初值1
+                # 如果已经有了can这个键，则将原来的计数值+1
                 if not ssCnt.has_key(can): ssCnt[can]=1
                 else: ssCnt[can] += 1
-    numItems = float(len(D))
+    numItems = float(len(D))  # len(D)返回数据集D的大小。使用numItems存储之
     retList = [] # 空列表，存储满足最小支持度要求的集合
     supportData = {} # 空字典，存储最频繁项集以及它们对应的支持度
     # 遍历字典SScnt，计算所有项集的支持度。如果支持度满足最小支持度要求，就将项集添加到retList中
     for key in ssCnt:
+        # 计算当前项集key的支持度
+        # （项集目前存储在字典里，键是项集，对应值是出现次数）
         support = ssCnt[key]/numItems
+        # 如果当前项集支持度大于最小支持度
         if support >= minSupport:
+            # 将当前项集添加到待输出列表retList头部
+            # insert函数用于向列表中添加元素。第一个参数为元素位置，第二个参数为元素内容
             retList.insert(0,key)
         supportData[key] = support
-    # 返回一个包含支持度值的字典以备用
+    # 返回一个从Cn过滤出来的，满足最小支持度的项集列表retList
+    # 返回一个包含支持度值的字典supportData以备用
     return retList, supportData
 
 # 功能：创建并输出候选项集Ck
@@ -84,8 +94,11 @@ def aprioriGen(Lk, k):
 # 两个参数：数据集，最小支持度（这里默认设置为0.5）
 # 功能：生成候选项集列表
 def apriori(dataSet, minSupport = 0.5):
+    # 使用createC1函数，根据输入的数据集dataSet先创建一个C1
     C1 = createC1(dataSet)
+    # 将C1转化为集合列表D。使用map函数将set映射到dataSet列表中的每一项
     D = map(set, dataSet)
+    # 使用scanD函数创建L1
     L1, supportData = scanD(D, C1, minSupport)
     L = [L1]
     k = 2
