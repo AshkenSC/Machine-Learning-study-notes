@@ -49,7 +49,7 @@ def scanD(D, Ck, minSupport):
     # 返回一个包含支持度值的字典以备用
     return retList, supportData
 
-# 功能：创建候选项集Ck
+# 功能：创建并输出候选项集Ck
 # 两个参数：频繁项集列表Lk，项集元素个数k
 def aprioriGen(Lk, k):
     retList = []        # 创建一个空列表
@@ -61,9 +61,13 @@ def aprioriGen(Lk, k):
         # 例如外层i=0时，内层循环从1，2，3...直到n。即将0元素分别与1~n比较
         # 外层执行到第二层时，i=1，内层则从2，3，...直到n，即将1元素分别与2,3...n比较
         for j in range(i+1, lenLk):
+            # list(Lk[i])表示将Lk[i]转化为列表。
+            # 后面跟[:k-2}表示取这个列表的前k-2项（是0到k-1，注意左闭右开）
             L1 = list(Lk[i])[:k-2]; L2 = list(Lk[j])[:k-2]
+            # 将列表L1, L2分别排序。
             L1.sort(); L2.sort()
-            # 如果前k-2个项相同时，将两个集合合并
+            # 比较L1和L2，注意它们只存储了前k-2项。
+            # 当L1==L2，即前k-2个项相同时，将Lk[i] Lk[j]两个集合合并
             if L1==L2:
                 retList.append(Lk[i] | Lk[j]) # 合并集合
     return retList
