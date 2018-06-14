@@ -98,14 +98,23 @@ def apriori(dataSet, minSupport = 0.5):
     C1 = createC1(dataSet)
     # 将C1转化为集合列表D。使用map函数将set映射到dataSet列表中的每一项
     D = map(set, dataSet)
-    # 使用scanD函数创建L1
+    # scanD函数返回过滤后的单元素项集L1和支持度数据supportData
     L1, supportData = scanD(D, C1, minSupport)
+    # L是最终输出的所有满足最小支持度的项集构成的列表。
+    # 其中L1列表包含所有满足要求的单元素项集，作为第一个子列表添加到L中
+    # 接下来，满足最小支持度的双元素项集列表L2，三元素项集列表L3…都将陆续添加到L中
     L = [L1]
     k = 2
+    # 使用循环来实现1)创建Ck，2)过滤得到Lk，3)将Lk添加到最后结果列表L中的操作
+    # 上面一行k=2就是让循环从C2开始
     while (len(L[k-2]) > 0):
+        # 创建未过滤k元素项集列表Ck
         Ck = aprioriGen(L[k-2], k)
-        Lk, supK = scanD(D, Ck, minSupport)#scan DB to get Lk
+        # 将Ck过滤得到符合最小支持度要求的k元素项集列表Lk
+        Lk, supK = scanD(D, Ck, minSupport)
+        # 更新支持度数据
         supportData.update(supK)
+        # 将过滤得到的Lk添加到最后结果列表L中
         L.append(Lk)
         k += 1
     return L, supportData
