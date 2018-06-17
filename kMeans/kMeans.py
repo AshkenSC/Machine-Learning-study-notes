@@ -23,7 +23,10 @@ def loadDataSet(fileName):
     # 函数返回最终结果dataMat
     return dataMat
 
+# 计算两个向量之间的欧氏距离。输入参数为两个列表格式存储的向量，vecA和vecB
 def distEclud(vecA, vecB):
+    # 从内层到外层：power(a,n)：求a的n次方。如果a是列表，则分别求各元素n次方
+    # sum(a)：求列表a各元素的和；sqrt(a)：求a的平方根
     return sqrt(sum(power(vecA - vecB, 2)))
 
 def randCent(dataSet, k):
