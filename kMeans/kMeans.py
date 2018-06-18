@@ -33,23 +33,34 @@ def distEclud(vecA, vecB):
 # 为给定数据集构建一个包含k个随机质心的集合。随机质心必须在数据集边界内
 # 参数：数据集dataSet，随机质心的数量k
 def randCent(dataSet, k):
-    # 读取数据集dataSet第二维的长度。（第一维为样本数，第二维为样本质量）
+    # 读取数据集dataSet第二维的长度。（第一维为样本数，第二维为样本属性）
     n = shape(dataSet)[1]
     # TODO: centroids赋值待进一步理解
-    # zeros()：初始化一个k*n的0矩阵
-    # mat()：将列表转化为矩阵类型
+    # zeros((k, n))：初始化一个1*k*n的三维全0矩阵。注意k,n外面有两层括号。如果是k*n二维矩阵，就是zeros(k,n)
+    # mat()：将列表转化为numpy矩阵格式。上述zeros创建了“矩阵”，但存储本质还是列表
     centroids = mat(zeros((k,n)))
     # 构建簇质心
     for j in range(n):
+        # minJ存储了dataSet第j列元素中的最小值
+        # dataSet[a:b, j]即取dataSet从a到b行的第j列元素。a,b不写即取第j列所有元素。加min即取这些元素最小值
         minJ = min(dataSet[:,j])
+        #与上面类似，max(dataSet[:,j]得到第j列最大值。将其和minJ相减，得到j列取值范围
         rangeJ = float(max(dataSet[:,j]) - minJ)
+        # 先看等号右边，从内而外分析
+        # random.rand(k,1)返回一个k行1列的0-1范围随机数列表。再乘以rangeJ，即为0-rangeJ范围的随机数
+        # 再加上minJ，最终minJ + rangeJ * random.rand(k,1)为一个k行1列的，取值范围在minJ到maxJ的随机数列表
+        # 再将其用mat()处理，得到一个1*k*1的三维矩阵。
+        # 由等式左边知道，这个矩阵作为质心的第j列
         centroids[:,j] = mat(minJ + rangeJ * random.rand(k,1))
     return centroids
 
+# 共四个参数。两个必选：数据集和簇的数目；两个可选：计算距离和创建初始质心的函数
 def kMeans(dataSet, k, distMeas=distEclud, createCent=randCent):
+    # 获取dataSet第一个维度的大小，即dataSet里有多少数据点
     m = shape(dataSet)[0]
-    clusterAssment = mat(zeros((m,2)))#create mat to assign data points
-                                      #to a centroid, also holds SE of each point
+    # cluster assignment矩阵，用来存储每个点的簇分配结果
+    # 包含两列，一列记录簇索引值，第二列存储误差（即当前点到簇质心的距离）
+    clusterAssment = mat(zeros((m,2)))
     centroids = createCent(dataSet, k)
     clusterChanged = True
     while clusterChanged:
@@ -62,7 +73,7 @@ def kMeans(dataSet, k, distMeas=distEclud, createCent=randCent):
                     minDist = distJI; minIndex = j
             if clusterAssment[i,0] != minIndex: clusterChanged = True
             clusterAssment[i,:] = minIndex,minDist**2
-        print centroids
+        #print centroids
         for cent in range(k):#recalculate centroids
             ptsInClust = dataSet[nonzero(clusterAssment[:,0].A==cent)[0]]#get all the point in this cluster
             centroids[cent,:] = mean(ptsInClust, axis=0) #assign centroid to mean
