@@ -1,3 +1,4 @@
+# 导入numpy库，需要使用其中部分函数
 from numpy import *
 
 # 将文本文件存储的数据导入到列表中。文本文件每一行为tab分隔的浮点数
@@ -29,11 +30,40 @@ def distEclud(vecA, vecB):
     # sum(a)：求列表a各元素的和；sqrt(a)：求a的平方根
     return sqrt(sum(power(vecA - vecB, 2)))
 
+# 为给定数据集构建一个包含k个随机质心的集合。随机质心必须在数据集边界内
+# 参数：数据集dataSet，随机质心的数量k
 def randCent(dataSet, k):
+    # 读取数据集dataSet第二维的长度。（第一维为样本数，第二维为样本质量）
     n = shape(dataSet)[1]
+    # TODO: centroids赋值待进一步理解
+    # zeros()：初始化一个k*n的0矩阵
+    # mat()：将列表转化为矩阵类型
     centroids = mat(zeros((k,n)))
+    # 构建簇质心
     for j in range(n):
         minJ = min(dataSet[:,j])
         rangeJ = float(max(dataSet[:,j]) - minJ)
         centroids[:,j] = mat(minJ + rangeJ * random.rand(k,1))
     return centroids
+
+def kMeans(dataSet, k, distMeas=distEclud, createCent=randCent):
+    m = shape(dataSet)[0]
+    clusterAssment = mat(zeros((m,2)))#create mat to assign data points
+                                      #to a centroid, also holds SE of each point
+    centroids = createCent(dataSet, k)
+    clusterChanged = True
+    while clusterChanged:
+        clusterChanged = False
+        for i in range(m):#for each data point assign it to the closest centroid
+            minDist = inf; minIndex = -1
+            for j in range(k):
+                distJI = distMeas(centroids[j,:],dataSet[i,:])
+                if distJI < minDist:
+                    minDist = distJI; minIndex = j
+            if clusterAssment[i,0] != minIndex: clusterChanged = True
+            clusterAssment[i,:] = minIndex,minDist**2
+        print centroids
+        for cent in range(k):#recalculate centroids
+            ptsInClust = dataSet[nonzero(clusterAssment[:,0].A==cent)[0]]#get all the point in this cluster
+            centroids[cent,:] = mean(ptsInClust, axis=0) #assign centroid to mean
+    return centroids, clusterAssment
