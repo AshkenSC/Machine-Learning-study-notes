@@ -56,16 +56,21 @@ def randCent(dataSet, k):
 
 # 共四个参数。两个必选：数据集和簇的数目；两个可选：计算距离和创建初始质心的函数
 def kMeans(dataSet, k, distMeas=distEclud, createCent=randCent):
-    # 获取dataSet第一个维度的大小，即dataSet里有多少数据点
+    # 获取dataSet第一个维度的大小，即dataSet里有多少数据点，将其存入m
     m = shape(dataSet)[0]
     # cluster assignment矩阵，用来存储每个点的簇分配结果
     # 包含两列，一列记录簇索引值，第二列存储误差（即当前点到簇质心的距离）
     clusterAssment = mat(zeros((m,2)))
     centroids = createCent(dataSet, k)
+    # 标志变量，用于标记在上次循环中簇分配结果是否发生变化
     clusterChanged = True
+    # 按照（计算质心-分配-重新计算质心）的方式不断迭代，直到分配结果不再变化为止
+    # 因此，当clusterChanged为True时，循环就不断进行
     while clusterChanged:
+        # 一旦进入循环，先将标志变量设为False
         clusterChanged = False
-        for i in range(m):#for each data point assign it to the closest centroid
+        # m存储了dataSet数据点数量。range(m)即从0到m-1列表，由此可遍历dataSet所有数据点
+        for i in range(m):  # for each data point assign it to the closest centroid
             minDist = inf; minIndex = -1
             for j in range(k):
                 distJI = distMeas(centroids[j,:],dataSet[i,:])
