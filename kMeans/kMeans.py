@@ -35,7 +35,6 @@ def distEclud(vecA, vecB):
 def randCent(dataSet, k):
     # 读取数据集dataSet第二维的长度。（第一维为样本数，第二维为样本属性）
     n = shape(dataSet)[1]
-    # TODO: centroids赋值待进一步理解
     # zeros((k, n))：初始化一个1*k*n的三维全0矩阵。注意k,n外面有两层括号。如果是k*n二维矩阵，就是zeros(k,n)
     # mat()：将列表转化为numpy矩阵格式。上述zeros创建了“矩阵”，但存储本质还是列表
     centroids = mat(zeros((k,n)))
