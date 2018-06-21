@@ -69,15 +69,18 @@ def kMeans(dataSet, k, distMeas=distEclud, createCent=randCent):
         # 一旦进入循环，先将标志变量设为False
         clusterChanged = False
         # m存储了dataSet数据点数量。range(m)即从0到m-1列表，由此可遍历dataSet所有数据点
-        for i in range(m):  # for each data point assign it to the closest centroid
+        for i in range(m):
+            # 将存储最小距离的变量初值设为inf，这样在后面循环第一轮时就能直接存入数据
+            # 将最小距离所在的索引值变量赋初值-1
             minDist = inf; minIndex = -1
+            # 遍历所有k个簇
             for j in range(k):
                 distJI = distMeas(centroids[j,:],dataSet[i,:])
                 if distJI < minDist:
                     minDist = distJI; minIndex = j
             if clusterAssment[i,0] != minIndex: clusterChanged = True
             clusterAssment[i,:] = minIndex,minDist**2
-        #print centroids
+        # 输出质心
         for cent in range(k):#recalculate centroids
             ptsInClust = dataSet[nonzero(clusterAssment[:,0].A==cent)[0]]#get all the point in this cluster
             centroids[cent,:] = mean(ptsInClust, axis=0) #assign centroid to mean
