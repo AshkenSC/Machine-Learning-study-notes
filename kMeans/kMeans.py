@@ -75,13 +75,22 @@ def kMeans(dataSet, k, distMeas=distEclud, createCent=randCent):
             minDist = inf; minIndex = -1
             # 遍历所有k个簇
             for j in range(k):
+                # 距离计算函数distEclud作为参数输入，赋值给了distMeas
+                # 因此现在distMeas函数实际就是distEclud
+                # centroid[j, :]表示质心第j行的所有元素构成的列表。dataSet同理
                 distJI = distMeas(centroids[j,:],dataSet[i,:])
+                # 如果当前数据点距离小于最小距离，则更新最小距离
                 if distJI < minDist:
+                    # 记录最小距离值和最小距离点序号
                     minDist = distJI; minIndex = j
+            # 如果最小距离点序号发生变化，则将标志变量改为True
             if clusterAssment[i,0] != minIndex: clusterChanged = True
             clusterAssment[i,:] = minIndex,minDist**2
-        # 输出质心
-        for cent in range(k):#recalculate centroids
-            ptsInClust = dataSet[nonzero(clusterAssment[:,0].A==cent)[0]]#get all the point in this cluster
-            centroids[cent,:] = mean(ptsInClust, axis=0) #assign centroid to mean
+        # 遍历所有质心并且更新他们的取值
+        for cent in range(k):
+            # 过滤数组以获得给定簇的所有点
+            ptsInClust = dataSet[nonzero(clusterAssment[:,0].A==cent)[0]]
+            # mean()计算所有点的均值。axis=0表示沿着矩阵列方向计算均值
+            centroids[cent,:] = mean(ptsInClust, axis=0)
+    # 返回所有的类质心与点的分配结果
     return centroids, clusterAssment
